@@ -1,0 +1,57 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Éléments transparents avec contours pour le foreground -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M55,30.5C68.25,30.5 79,41.25 79,54.5C79,67.75 68.25,78.5 55,78.5C41.75,78.5 31,67.75 31,54.5C31,41.25 41.75,30.5 55,30.5Z"
+        android:strokeWidth="2"
+        android:strokeColor="#FFFFFF" />
+
+    <!-- Étoile du drapeau algérien -->
+    <path
+        android:fillColor="#E32020"
+        android:pathData="M54,38L61,54L46,44L64,44L49,54Z" />
+
+    <!-- Point d'interrogation stylisé -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M55,37C48.5,37 43,42.5 43,49C43,55.5 47,58 51,60C52,60.5 53,62 53,64" />
+
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M53,71m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0" />
+
+    <!-- "QUIZ" texte stylisé -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M25,84L25,76L33,76L33,78L27,78L27,79L32,79L32,81L27,81L27,82L33,82L33,84L25,84Z" />
+
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M36,84L36,76L38,76L38,82L43,82L43,84L36,84Z" />
+
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M45,84L45,76L47,76L47,84L45,84Z" />
+
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M50,84L50,76L52,76L55,81L58,76L60,76L60,84L58,84L58,79L55,83L52,79L52,84L50,84Z" />
+
+    <!-- "ALGÉRIE" stylisé -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M63,84L63,76L71,76L71,78L65,78L65,79L70,79L70,81L65,81L65,82L71,82L71,84L63,84Z" />
+
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M74,84L74,76L76,76L76,82L81,82L81,84L74,84Z" />
+</vector>

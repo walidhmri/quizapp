@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    
+    <item
+        android:id="@+id/menu_profile"
+        android:title="Profil"
+        android:icon="@android:drawable/ic_menu_myplaces"
+        app:showAsAction="ifRoom" />
+    
+    <item
+        android:id="@+id/menu_random_quiz"
+        android:title="Quiz Aléatoire"
+        android:icon="@android:drawable/ic_menu_help"
+        app:showAsAction="ifRoom" />
+    
+    <item
+        android:id="@+id/menu_add_quiz"
+        android:title="Ajouter un Quiz"
+        android:icon="@android:drawable/ic_menu_add"
+        app:showAsAction="ifRoom" />
+    
+</menu>
