@@ -40,22 +40,18 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // Check if user is already logged in
         if (isLoggedIn()) {
             navigateToQuizList();
             return;
         }
 
-        // Initialize UI components
         usernameEditText = findViewById(R.id.usernameEditText);
         passwordEditText = findViewById(R.id.passwordEditText);
         loginButton = findViewById(R.id.loginButton);
         registerTextView = findViewById(R.id.registerTextView);
 
-        // Initialize database helper
         dbHelper = new UserDatabaseHelper(this);
 
-        // Set up login button click listener
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,7 +59,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        // Set up register text view click listener
         registerTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,7 +71,6 @@ public class LoginActivity extends AppCompatActivity {
         String username = usernameEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
 
-        // Validate input
         if (TextUtils.isEmpty(username)) {
             usernameEditText.setError("Veuillez entrer votre nom d'utilisateur");
             return;
@@ -87,14 +81,11 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        // Authenticate user
         User user = dbHelper.authenticateUser(username, password);
 
         if (user != null) {
-            // Save login state
             saveLoginState(user.getId(), user.getUsername());
             
-            // Navigate to quiz list
             navigateToQuizList();
         } else {
             Toast.makeText(this, "Nom d'utilisateur ou mot de passe incorrect", Toast.LENGTH_SHORT).show();
@@ -116,22 +107,18 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void navigateToQuizList() {
-        // Obtenir un quiz aléatoire
         QuizDatabaseHelper dbHelper = new QuizDatabaseHelper(this);
         List<Quiz> quizzes = dbHelper.getAllQuizzes();
         
         if (quizzes.isEmpty()) {
-            // Si aucun quiz n'est disponible, aller à la liste des quiz
             Intent intent = new Intent(LoginActivity.this, QuizListActivity.class);
             startActivity(intent);
             finish();
         } else {
-            // Sélectionner un quiz aléatoire
             Random random = new Random();
             int randomIndex = random.nextInt(quizzes.size());
             Quiz randomQuiz = quizzes.get(randomIndex);
             
-            // Démarrer le quiz aléatoire
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             intent.putExtra("quiz_id", randomQuiz.getId());
             intent.putExtra("from_login", true);

@@ -15,10 +15,8 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "user_db.db";
     private static final int DATABASE_VERSION = 1;
 
-    // Table name
     private static final String TABLE_USERS = "users";
 
-    // Column names
     private static final String KEY_ID = "id";
     private static final String KEY_USERNAME = "username";
     private static final String KEY_PASSWORD = "password";
@@ -54,7 +52,6 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    // Add a new user
     public long addUser(User user) {
         SQLiteDatabase db = this.getWritableDatabase();
         long id = -1;
@@ -67,7 +64,6 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
             values.put(KEY_TOTAL_SCORE, user.getTotalScore());
             values.put(KEY_QUIZZES_COMPLETED, user.getQuizzesCompleted());
 
-            // Insert row
             id = db.insert(TABLE_USERS, null, values);
         } catch (Exception e) {
             Log.e(TAG, "Error adding user: " + e.getMessage());
@@ -77,7 +73,6 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
         return id;
     }
 
-    // Check if username exists
     public boolean checkUsername(String username) {
         SQLiteDatabase db = this.getReadableDatabase();
         boolean exists = false;
@@ -98,7 +93,6 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
         return exists;
     }
 
-    // Authenticate user
     public User authenticateUser(String username, String password) {
         SQLiteDatabase db = this.getReadableDatabase();
         User user = null;
@@ -115,7 +109,7 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
                 user.setEmail(cursor.getString(cursor.getColumnIndexOrThrow(KEY_EMAIL)));
                 user.setTotalScore(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_TOTAL_SCORE)));
                 user.setQuizzesCompleted(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_QUIZZES_COMPLETED)));
-                user.setPassword(""); // Don't return the password
+                user.setPassword(""); 
                 cursor.close();
             }
         } catch (Exception e) {
@@ -126,13 +120,11 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
         return user;
     }
 
-    // Update user score
     public boolean updateUserScore(int userId, int additionalScore) {
         SQLiteDatabase db = this.getWritableDatabase();
         boolean success = false;
 
         try {
-            // Get current score
             Cursor cursor = db.query(TABLE_USERS, new String[]{KEY_TOTAL_SCORE, KEY_QUIZZES_COMPLETED},
                     KEY_ID + "=?", new String[]{String.valueOf(userId)},
                     null, null, null);
@@ -142,12 +134,10 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
                 int quizzesCompleted = cursor.getInt(cursor.getColumnIndexOrThrow(KEY_QUIZZES_COMPLETED));
                 cursor.close();
 
-                // Update score and quizzes completed
                 ContentValues values = new ContentValues();
                 values.put(KEY_TOTAL_SCORE, currentScore + additionalScore);
                 values.put(KEY_QUIZZES_COMPLETED, quizzesCompleted + 1);
 
-                // Update row
                 int rowsAffected = db.update(TABLE_USERS, values, KEY_ID + "=?", new String[]{String.valueOf(userId)});
                 success = rowsAffected > 0;
             }
@@ -159,7 +149,6 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
         return success;
     }
 
-    // Get user by ID
     public User getUserById(int userId) {
         SQLiteDatabase db = this.getReadableDatabase();
         User user = null;
@@ -176,7 +165,7 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
                 user.setEmail(cursor.getString(cursor.getColumnIndexOrThrow(KEY_EMAIL)));
                 user.setTotalScore(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_TOTAL_SCORE)));
                 user.setQuizzesCompleted(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_QUIZZES_COMPLETED)));
-                user.setPassword(""); // Don't return the password
+                user.setPassword(""); 
                 cursor.close();
             }
         } catch (Exception e) {

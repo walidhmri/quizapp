@@ -17,23 +17,22 @@ public class QuizDatabaseHelper extends SQLiteOpenHelper {
 
     private static final String TAG = "QuizDatabaseHelper";
     private static final String DATABASE_NAME = "quiz_app.db";
-    private static final int DATABASE_VERSION = 2; // Augmenter la version pour forcer la mise à jour
+    private static final int DATABASE_VERSION = 2;
 
-    // Table names
+
     private static final String TABLE_QUIZZES = "quizzes";
     private static final String TABLE_QUESTIONS = "questions";
     private static final String TABLE_QUIZ_PROGRESS = "quiz_progress";
 
-    // Common column names
+
     private static final String KEY_ID = "id";
 
-    // QUIZZES Table - column names
     private static final String KEY_TITLE = "title";
     private static final String KEY_DESCRIPTION = "description";
     private static final String KEY_TOTAL_QUESTIONS = "total_questions";
     private static final String KEY_COMPLETED_QUESTIONS = "completed_questions";
 
-    // QUESTIONS Table - column names
+
     private static final String KEY_QUIZ_ID = "quiz_id";
     private static final String KEY_QUESTION_TEXT = "question_text";
     private static final String KEY_OPTION1 = "option1";
@@ -43,7 +42,7 @@ public class QuizDatabaseHelper extends SQLiteOpenHelper {
     private static final String KEY_CORRECT_ANSWER = "correct_answer";
     private static final String KEY_ANSWERED = "answered";
 
-    // QUIZ_PROGRESS Table - column names
+
     private static final String KEY_QUESTION_ID = "question_id";
     private static final String KEY_ASKED = "asked";
     private static final String KEY_SESSION_ID = "session_id";
@@ -55,7 +54,7 @@ public class QuizDatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         try {
-            // Create quizzes table
+
             String CREATE_QUIZZES_TABLE = "CREATE TABLE " + TABLE_QUIZZES + "("
                     + KEY_ID + " INTEGER PRIMARY KEY,"
                     + KEY_TITLE + " TEXT,"
@@ -75,7 +74,7 @@ public class QuizDatabaseHelper extends SQLiteOpenHelper {
                     + KEY_CORRECT_ANSWER + " TEXT,"
                     + KEY_ANSWERED + " INTEGER DEFAULT 0" + ")";
 
-            // Create quiz progress table
+
             String CREATE_QUIZ_PROGRESS_TABLE = "CREATE TABLE " + TABLE_QUIZ_PROGRESS + "("
                     + KEY_ID + " INTEGER PRIMARY KEY,"
                     + KEY_QUIZ_ID + " INTEGER,"
@@ -99,7 +98,6 @@ public class QuizDatabaseHelper extends SQLiteOpenHelper {
         Log.d(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion);
 
         try {
-            // Si la table quiz_progress n'existe pas, créez-la
             if (oldVersion < 2) {
                 String CREATE_QUIZ_PROGRESS_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_QUIZ_PROGRESS + "("
                         + KEY_ID + " INTEGER PRIMARY KEY,"
@@ -620,7 +618,7 @@ public class QuizDatabaseHelper extends SQLiteOpenHelper {
         return count;
     }
 
-    // Update total questions for a quiz
+
     public void updateQuizTotalQuestions(int quizId, int totalQuestions) {
         SQLiteDatabase db = this.getWritableDatabase();
 

@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String KEY_USER_ID = "user_id";
     private static final int QUESTIONS_PER_QUIZ = 5;
     private static final int POINTS_PER_CORRECT_ANSWER = 10;
-    private static final long COUNTDOWN_TIME = 30000; // 30 seconds per question
+    private static final long COUNTDOWN_TIME = 30000; 
 
     private TextView quizTitleTextView;
     private TextView questionTextView;
@@ -64,16 +64,13 @@ public class MainActivity extends AppCompatActivity {
     private boolean wasInBackground = false;
     private boolean needNewQuestion = false;
 
-    // Session ID to track questions in a quiz session
     private String sessionId;
 
-    // Track quiz progress
     private int currentQuestionIndex = 0;
     private int correctAnswers = 0;
     private int score = 0;
     private List<Question> quizQuestions;
 
-    // Stocker les réponses de l'utilisateur
     private boolean[] questionAnswered;
 
     @Override
@@ -84,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
         try {
             Log.d(TAG, "onCreate: Initialisation de l'activité");
 
-            // Initialize UI components
             quizTitleTextView = findViewById(R.id.quizTitleTextView);
             questionTextView = findViewById(R.id.questionTextView);
             optionsRadioGroup = findViewById(R.id.optionsRadioGroup);
@@ -98,36 +94,28 @@ public class MainActivity extends AppCompatActivity {
             timerTextView = findViewById(R.id.timerTextView);
             questionCard = findViewById(R.id.questionCard);
 
-            // Initialize database helper
             dbHelper = new QuizDatabaseHelper(this);
 
-            // Generate a new session ID for this quiz session
             sessionId = UUID.randomUUID().toString();
             Log.d(TAG, "onCreate: Nouvelle session ID générée: " + sessionId);
 
-            // Get quiz ID from intent
             quizId = getIntent().getIntExtra("quiz_id", -1);
             fromSplash = getIntent().getBooleanExtra("from_splash", false);
             Log.d(TAG, "onCreate: Quiz ID: " + quizId + ", fromSplash: " + fromSplash);
 
-            // Réinitialiser le score et les réponses correctes
             resetQuizProgress();
 
             if (quizId != -1) {
-                // Load the specific quiz
                 currentQuiz = dbHelper.getQuiz(quizId);
                 quizTitleTextView.setText(currentQuiz.getTitle());
                 Log.d(TAG, "onCreate: Chargement du quiz spécifique: " + currentQuiz.getTitle());
 
-                // Load questions for this quiz
                 loadQuizQuestions();
             } else {
-                // No specific quiz selected, load random questions
                 Log.d(TAG, "onCreate: Chargement d'un quiz aléatoire");
                 loadRandomQuestions();
             }
 
-            // Set up submit button click listener
             submitButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -135,28 +123,24 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-            // Initialize broadcast receivers
             initializeBroadcastReceivers();
         } catch (Exception e) {
             Log.e(TAG, "Error in onCreate: " + e.getMessage());
             e.printStackTrace();
             Toast.makeText(this, "Une erreur s'est produite. Veuillez réessayer.", Toast.LENGTH_LONG).show();
 
-            // Redirect to QuizListActivity in case of error
             Intent intent = new Intent(this, QuizListActivity.class);
             startActivity(intent);
             finish();
         }
     }
 
-    // Réinitialiser le score et les réponses correctes
     private void resetQuizProgress() {
         Log.d(TAG, "resetQuizProgress: Réinitialisation du score et des réponses correctes");
         score = 0;
         correctAnswers = 0;
         currentQuestionIndex = 0;
 
-        // Effacer les préférences partagées
         SharedPreferences sharedPreferences = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt("current_score", 0);
@@ -174,7 +158,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.menu_all_quizzes) {
-            // Go to quiz list activity
             Intent intent = new Intent(this, QuizListActivity.class);
             startActivity(intent);
             return true;
@@ -183,7 +166,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initializeBroadcastReceivers() {
-        // Phone call receiver
         callReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -191,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
                     String state = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
                     if (state.equals(TelephonyManager.EXTRA_STATE_RINGING) ||
                             state.equals(TelephonyManager.EXTRA_STATE_OFFHOOK)) {
-                        // Phone is ringing or call is active
+                        Toast.makeText(context, "Phone Call received", Toast.LENGTH_SHORT).show();
                         Log.d(TAG, "Appel téléphonique détecté, chargement d'une nouvelle question");
                         loadNewQuestion();
                     }
@@ -199,12 +181,10 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        // SMS receiver
         smsReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (intent.getAction().equals(Telephony.Sms.Intents.SMS_RECEIVED_ACTION)) {
-                    // SMS received
                     Log.d(TAG, "SMS reçu, chargement d'une nouvelle question");
                     loadNewQuestion();
                 }
@@ -219,22 +199,20 @@ public class MainActivity extends AppCompatActivity {
         try {
             Log.d(TAG, "onResume: Reprise de l'activité");
 
-            // Register broadcast receivers
             IntentFilter callFilter = new IntentFilter(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
             registerReceiver(callReceiver, callFilter);
 
             IntentFilter smsFilter = new IntentFilter(Telephony.Sms.Intents.SMS_RECEIVED_ACTION);
             registerReceiver(smsReceiver, smsFilter);
 
-            // Si l'application revient de l'arrière-plan, charger une nouvelle question
             if (wasInBackground || needNewQuestion) {
                 Log.d(TAG, "onResume: Application revient de l'arrière-plan ou besoin d'une nouvelle question, chargement d'une nouvelle question");
+                Toast.makeText(this, "Chargement d'une nouvelle question", Toast.LENGTH_SHORT).show();
                 loadNewQuestion();
                 wasInBackground = false;
                 needNewQuestion = false;
             }
 
-            // Réinitialiser le flag fromSplash après le premier resume
             fromSplash = false;
         } catch (Exception e) {
             Log.e(TAG, "Error in onResume: " + e.getMessage());
@@ -246,29 +224,24 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         Log.d(TAG, "onPause: Mise en pause de l'activité");
+        Toast.makeText(this, "L'application est en pause", Toast.LENGTH_SHORT).show();
 
-        // Unregister broadcast receivers
         try {
             unregisterReceiver(callReceiver);
             unregisterReceiver(smsReceiver);
         } catch (IllegalArgumentException e) {
-            // Receiver not registered
             Log.w(TAG, "Receiver not registered: " + e.getMessage());
         }
 
-        // Cancel timer
         if (countDownTimer != null) {
             countDownTimer.cancel();
             timerRunning = false;
         }
 
-        // Marquer que l'application est passée en arrière-plan
         wasInBackground = true;
 
-        // Indiquer qu'une nouvelle question doit être chargée au prochain onResume
         needNewQuestion = true;
 
-        // Sauvegarder l'état actuel du quiz
         saveQuizState();
     }
 
@@ -277,18 +250,14 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
         Log.d(TAG, "onStop: Arrêt de l'activité");
 
-        // Sauvegarder l'état actuel du quiz
         saveQuizState();
 
-        // Marquer que l'application est passée en arrière-plan
         wasInBackground = true;
 
-        // Indiquer qu'une nouvelle question doit être chargée au prochain onResume
         needNewQuestion = true;
     }
 
     private void saveQuizState() {
-        // Sauvegarder le score et les réponses correctes actuels
         SharedPreferences sharedPreferences = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt("current_score", score);
@@ -299,36 +268,29 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "saveQuizState: État sauvegardé - Score: " + score + ", Réponses correctes: " + correctAnswers + ", Index question: " + currentQuestionIndex);
     }
 
-    // Méthode dédiée pour charger une nouvelle question
     private void loadNewQuestion() {
         Log.d(TAG, "loadNewQuestion: Chargement d'une nouvelle question");
 
-        // Annuler le timer existant
         if (countDownTimer != null) {
             countDownTimer.cancel();
             timerRunning = false;
         }
 
         if (quizId != -1) {
-            // Si on est dans un quiz spécifique, charger une nouvelle question de ce quiz
             Question newQuestion = dbHelper.getRandomQuestionFromQuiz(quizId, sessionId,
                     currentQuestion != null ? currentQuestion.getId() : -1);
 
             if (newQuestion != null) {
                 Log.d(TAG, "loadNewQuestion: Nouvelle question chargée: " + newQuestion.getQuestionText());
-                // Remplacer la question actuelle dans la liste
                 if (currentQuestionIndex < quizQuestions.size()) {
                     quizQuestions.set(currentQuestionIndex, newQuestion);
                     currentQuestion = newQuestion;
                     displayQuestion(newQuestion);
-                    // Réinitialiser la réponse de l'utilisateur pour cette question
                     questionAnswered[currentQuestionIndex] = false;
                 }
             } else {
                 Log.d(TAG, "loadNewQuestion: Aucune nouvelle question disponible");
-                // Si aucune nouvelle question n'est disponible, essayer de réinitialiser la session
                 dbHelper.resetQuizSession(quizId, sessionId);
-                // Et réessayer de charger une question
                 newQuestion = dbHelper.getRandomQuestionFromQuiz(quizId, sessionId, -1);
                 if (newQuestion != null) {
                     Log.d(TAG, "loadNewQuestion: Nouvelle question chargée après réinitialisation: " + newQuestion.getQuestionText());
@@ -343,16 +305,13 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         } else {
-            // Si on est dans un quiz aléatoire, charger une nouvelle question aléatoire
             Question newQuestion = dbHelper.getRandomQuestion();
             if (newQuestion != null) {
                 Log.d(TAG, "loadNewQuestion: Nouvelle question aléatoire chargée: " + newQuestion.getQuestionText());
-                // Remplacer la question actuelle dans la liste
                 if (currentQuestionIndex < quizQuestions.size()) {
                     quizQuestions.set(currentQuestionIndex, newQuestion);
                     currentQuestion = newQuestion;
                     displayQuestion(newQuestion);
-                    // Réinitialiser la réponse de l'utilisateur pour cette question
                     questionAnswered[currentQuestionIndex] = false;
                 }
             } else {
@@ -365,29 +324,24 @@ public class MainActivity extends AppCompatActivity {
         try {
             Log.d(TAG, "loadQuizQuestions: Chargement des questions pour le quiz " + quizId);
 
-            // Réinitialiser le score et les réponses correctes
             resetQuizProgress();
 
             quizQuestions = new ArrayList<>();
 
-            // Réinitialiser la session pour ce quiz
             dbHelper.resetQuizSession(quizId, sessionId);
 
-            // Charger les questions une par une pour éviter les répétitions
             for (int i = 0; i < QUESTIONS_PER_QUIZ; i++) {
                 Question question = dbHelper.getRandomQuestionFromQuiz(quizId, sessionId, -1);
                 if (question != null) {
                     quizQuestions.add(question);
                     Log.d(TAG, "loadQuizQuestions: Question ajoutée: " + question.getQuestionText());
                 } else {
-                    // Pas assez de questions disponibles
                     Log.d(TAG, "loadQuizQuestions: Plus de questions disponibles après " + i + " questions");
                     break;
                 }
             }
 
             if (!quizQuestions.isEmpty()) {
-                // Initialiser le tableau pour suivre les questions répondues
                 questionAnswered = new boolean[quizQuestions.size()];
 
                 currentQuestionIndex = 0;
@@ -412,12 +366,10 @@ public class MainActivity extends AppCompatActivity {
         try {
             Log.d(TAG, "loadRandomQuestions: Chargement d'un quiz aléatoire");
 
-            // Réinitialiser le score et les réponses correctes
             resetQuizProgress();
 
             quizQuestions = new ArrayList<>();
 
-            // Créer une liste de tous les quiz disponibles
             List<Quiz> allQuizzes = dbHelper.getAllQuizzes();
             if (allQuizzes.isEmpty()) {
                 Log.d(TAG, "loadRandomQuestions: Aucun quiz disponible");
@@ -426,7 +378,6 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-            // Sélectionner un quiz aléatoire
             Random random = new Random();
             int randomIndex = random.nextInt(allQuizzes.size());
             Quiz randomQuiz = allQuizzes.get(randomIndex);
@@ -434,24 +385,20 @@ public class MainActivity extends AppCompatActivity {
 
             Log.d(TAG, "loadRandomQuestions: Quiz aléatoire sélectionné: " + randomQuiz.getTitle() + " (ID: " + quizId + ")");
 
-            // Réinitialiser la session pour ce quiz
             dbHelper.resetQuizSession(quizId, sessionId);
 
-            // Charger les questions une par une pour éviter les répétitions
             for (int i = 0; i < QUESTIONS_PER_QUIZ; i++) {
                 Question question = dbHelper.getRandomQuestionFromQuiz(quizId, sessionId, -1);
                 if (question != null) {
                     quizQuestions.add(question);
                     Log.d(TAG, "loadRandomQuestions: Question ajoutée: " + question.getQuestionText());
                 } else {
-                    // Pas assez de questions disponibles
                     Log.d(TAG, "loadRandomQuestions: Plus de questions disponibles après " + i + " questions");
                     break;
                 }
             }
 
             if (!quizQuestions.isEmpty()) {
-                // Initialiser le tableau pour suivre les questions répondues
                 questionAnswered = new boolean[quizQuestions.size()];
 
                 currentQuestionIndex = 0;
@@ -478,20 +425,16 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d(TAG, "displayQuestion: Affichage de la question: " + question.getQuestionText());
 
-        // Display the question
         questionTextView.setText(currentQuestion.getQuestionText());
 
-        // Set the options
         String[] options = currentQuestion.getOptions();
         option1.setText(options[0]);
         option2.setText(options[1]);
         option3.setText(options[2]);
         option4.setText(options[3]);
 
-        // Clear any previous selection
         optionsRadioGroup.clearCheck();
 
-        // Start timer
         startTimer();
     }
 
@@ -528,7 +471,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkAnswer() {
-        // Get selected option
         int selectedId = optionsRadioGroup.getCheckedRadioButtonId();
 
         if (selectedId == -1) {
@@ -536,7 +478,6 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        // Cancel timer
         if (countDownTimer != null) {
             countDownTimer.cancel();
             timerRunning = false;
@@ -547,10 +488,8 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d(TAG, "checkAnswer: Réponse sélectionnée: " + selectedAnswer);
 
-        // Marquer cette question comme répondue
         questionAnswered[currentQuestionIndex] = true;
 
-        // Check if the answer is correct
         if (selectedAnswer.equals(currentQuestion.getCorrectAnswer())) {
             Toast.makeText(this, "Correct!", Toast.LENGTH_SHORT).show();
             correctAnswers++;
@@ -558,7 +497,6 @@ public class MainActivity extends AppCompatActivity {
 
             Log.d(TAG, "checkAnswer: Réponse correcte! Score: " + score + ", Réponses correctes: " + correctAnswers);
 
-            // Mark question as answered if it's not already
             if (!currentQuestion.isAnswered()) {
                 dbHelper.markQuestionAsAnswered(currentQuestion.getId());
             }
@@ -567,7 +505,6 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "checkAnswer: Réponse incorrecte. La bonne réponse était: " + currentQuestion.getCorrectAnswer());
         }
 
-        // Move to next question or finish quiz
         moveToNextQuestion();
     }
 
@@ -580,12 +517,10 @@ public class MainActivity extends AppCompatActivity {
             displayQuestion(quizQuestions.get(currentQuestionIndex));
             updateProgress();
         } else {
-            // Vérifier si toutes les questions ont été répondues
             if (allQuestionsAnswered()) {
                 Log.d(TAG, "moveToNextQuestion: Toutes les questions ont été répondues. Fin du quiz.");
                 finishQuiz();
             } else {
-                // Trouver la première question non répondue
                 for (int i = 0; i < questionAnswered.length; i++) {
                     if (!questionAnswered[i]) {
                         currentQuestionIndex = i;
@@ -601,11 +536,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateProgress() {
-        // Update progress bar
         progressBar.setMax(quizQuestions.size());
         progressBar.setProgress(currentQuestionIndex + 1);
 
-        // Update progress text
         progressTextView.setText((currentQuestionIndex + 1) + "/" + quizQuestions.size() + " questions");
 
         Log.d(TAG, "updateProgress: Progression mise à jour: " + (currentQuestionIndex + 1) + "/" + quizQuestions.size());
@@ -614,7 +547,6 @@ public class MainActivity extends AppCompatActivity {
     private void finishQuiz() {
         Log.d(TAG, "finishQuiz: Fin du quiz. Score final: " + score + ", Réponses correctes: " + correctAnswers);
 
-        // Show quiz result
         Intent intent = new Intent(MainActivity.this, QuizResultActivity.class);
         intent.putExtra("score", score);
         intent.putExtra("correct_answers", correctAnswers);

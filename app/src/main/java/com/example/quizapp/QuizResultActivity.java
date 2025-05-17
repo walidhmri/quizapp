@@ -38,7 +38,6 @@ public class QuizResultActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz_result);
 
-        // Initialize UI components
         scoreTextView = findViewById(R.id.scoreTextView);
         correctAnswersTextView = findViewById(R.id.correctAnswersTextView);
         quizTitleTextView = findViewById(R.id.quizTitleTextView);
@@ -46,10 +45,8 @@ public class QuizResultActivity extends AppCompatActivity {
         returnToListButton = findViewById(R.id.returnToListButton);
         retryQuizButton = findViewById(R.id.retryQuizButton);
 
-        // Initialize database helper
         userDbHelper = new UserDatabaseHelper(this);
 
-        // Get data from intent
         score = getIntent().getIntExtra("score", 0);
         correctAnswers = getIntent().getIntExtra("correct_answers", 0);
         totalQuestions = getIntent().getIntExtra("total_questions", 0);
@@ -59,12 +56,10 @@ public class QuizResultActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: Score: " + score + ", Réponses correctes: " + correctAnswers + 
               ", Total questions: " + totalQuestions + ", Quiz ID: " + quizId);
 
-        // Update UI
         scoreTextView.setText(String.valueOf(score));
         correctAnswersTextView.setText(correctAnswers + "/" + totalQuestions);
         quizTitleTextView.setText(quizTitle);
 
-        // Set congratulation message based on score
         if (correctAnswers == totalQuestions) {
             congratsTextView.setText("Félicitations ! Score parfait !");
         } else if ((double) correctAnswers / totalQuestions >= 0.7) {
@@ -75,10 +70,8 @@ public class QuizResultActivity extends AppCompatActivity {
             congratsTextView.setText("Vous pouvez faire mieux ! Réessayez !");
         }
 
-        // Update user score in database
         updateUserScore();
 
-        // Set up return to list button click listener
         returnToListButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -86,7 +79,6 @@ public class QuizResultActivity extends AppCompatActivity {
             }
         });
 
-        // Set up retry quiz button click listener
         retryQuizButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,7 +86,6 @@ public class QuizResultActivity extends AppCompatActivity {
             }
         });
         
-        // Réinitialiser les préférences partagées pour éviter de conserver le score
         resetSharedPreferences();
     }
     

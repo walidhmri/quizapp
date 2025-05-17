@@ -34,7 +34,6 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        // Initialize UI components
         usernameTextView = findViewById(R.id.usernameTextView);
         emailTextView = findViewById(R.id.emailTextView);
         totalScoreTextView = findViewById(R.id.totalScoreTextView);
@@ -42,13 +41,10 @@ public class ProfileActivity extends AppCompatActivity {
         logoutButton = findViewById(R.id.logoutButton);
         backButton = findViewById(R.id.backButton);
 
-        // Initialize database helper
         dbHelper = new UserDatabaseHelper(this);
 
-        // Load user data
         loadUserData();
 
-        // Set up logout button click listener
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -56,7 +52,6 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
-        // Set up back button click listener
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -82,13 +77,11 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void logout() {
-        // Clear login state
         SharedPreferences sharedPreferences = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.clear();
         editor.apply();
 
-        // Navigate to login
         Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);

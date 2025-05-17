@@ -32,7 +32,6 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        // Initialize UI components
         usernameEditText = findViewById(R.id.usernameEditText);
         emailEditText = findViewById(R.id.emailEditText);
         passwordEditText = findViewById(R.id.passwordEditText);
@@ -40,10 +39,8 @@ public class RegisterActivity extends AppCompatActivity {
         registerButton = findViewById(R.id.registerButton);
         loginTextView = findViewById(R.id.loginTextView);
 
-        // Initialize database helper
         dbHelper = new UserDatabaseHelper(this);
 
-        // Set up register button click listener
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -51,7 +48,6 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
-        // Set up login text view click listener
         loginTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -66,7 +62,6 @@ public class RegisterActivity extends AppCompatActivity {
         String password = passwordEditText.getText().toString().trim();
         String confirmPassword = confirmPasswordEditText.getText().toString().trim();
 
-        // Validate input
         if (TextUtils.isEmpty(username)) {
             usernameEditText.setError("Veuillez entrer un nom d'utilisateur");
             return;
@@ -97,13 +92,11 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-        // Check if username already exists
         if (dbHelper.checkUsername(username)) {
             usernameEditText.setError("Ce nom d'utilisateur est déjà utilisé");
             return;
         }
 
-        // Create user
         User user = new User(username, password, email);
         long id = dbHelper.addUser(user);
 

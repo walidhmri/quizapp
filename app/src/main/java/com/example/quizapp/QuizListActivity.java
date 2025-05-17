@@ -44,7 +44,6 @@ public class QuizListActivity extends AppCompatActivity implements QuizAdapter.O
 
         dbHelper = new QuizDatabaseHelper(this);
 
-        // Set welcome message
         SharedPreferences sharedPreferences = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
         String username = sharedPreferences.getString(KEY_USERNAME, "");
         if (!username.isEmpty()) {
@@ -65,17 +64,14 @@ public class QuizListActivity extends AppCompatActivity implements QuizAdapter.O
         int id = item.getItemId();
         
         if (id == R.id.menu_profile) {
-            // Go to profile activity
             Intent intent = new Intent(this, ProfileActivity.class);
             startActivity(intent);
             return true;
         } else if (id == R.id.menu_random_quiz) {
-            // Start a random quiz
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
             return true;
         } else if (id == R.id.menu_add_quiz) {
-            // Go to add quiz activity
             Intent intent = new Intent(this, AddQuizActivity.class);
             startActivity(intent);
             return true;
@@ -87,7 +83,6 @@ public class QuizListActivity extends AppCompatActivity implements QuizAdapter.O
     @Override
     protected void onResume() {
         super.onResume();
-        // Refresh the list when returning to this activity
         loadQuizzes();
     }
 

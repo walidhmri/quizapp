@@ -38,7 +38,6 @@ public class AddQuizActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_quiz);
 
-        // Initialize UI components
         quizTitleEditText = findViewById(R.id.quizTitleEditText);
         quizDescriptionEditText = findViewById(R.id.quizDescriptionEditText);
         questionTextEditText = findViewById(R.id.questionTextEditText);
@@ -50,10 +49,8 @@ public class AddQuizActivity extends AppCompatActivity {
         addQuestionButton = findViewById(R.id.addQuestionButton);
         saveQuizButton = findViewById(R.id.saveQuizButton);
 
-        // Initialize database helper
         dbHelper = new QuizDatabaseHelper(this);
 
-        // Set up add question button click listener
         addQuestionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -61,7 +58,6 @@ public class AddQuizActivity extends AppCompatActivity {
             }
         });
 
-        // Set up save quiz button click listener
         saveQuizButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -71,7 +67,6 @@ public class AddQuizActivity extends AppCompatActivity {
     }
 
     private void addQuestion() {
-        // Validate quiz info if this is the first question
         if (currentQuiz == null) {
             String title = quizTitleEditText.getText().toString().trim();
             String description = quizDescriptionEditText.getText().toString().trim();
@@ -81,14 +76,12 @@ public class AddQuizActivity extends AppCompatActivity {
                 return;
             }
 
-            // Create quiz
             currentQuiz = new Quiz();
             currentQuiz.setTitle(title);
             currentQuiz.setDescription(description);
             currentQuiz.setTotalQuestions(0);
             currentQuiz.setCompletedQuestions(0);
 
-            // Add quiz to database
             long quizId = dbHelper.addQuiz(currentQuiz);
             if (quizId == -1) {
                 Toast.makeText(this, "Erreur lors de la création du quiz", Toast.LENGTH_SHORT).show();
@@ -96,12 +89,10 @@ public class AddQuizActivity extends AppCompatActivity {
             }
             currentQuiz.setId((int) quizId);
 
-            // Disable quiz info fields
             quizTitleEditText.setEnabled(false);
             quizDescriptionEditText.setEnabled(false);
         }
 
-        // Validate question info
         String questionText = questionTextEditText.getText().toString().trim();
         String option1 = option1EditText.getText().toString().trim();
         String option2 = option2EditText.getText().toString().trim();
@@ -125,30 +116,25 @@ public class AddQuizActivity extends AppCompatActivity {
             return;
         }
 
-        // Verify that the correct answer matches one of the options
         if (!correctAnswer.equals(option1) && !correctAnswer.equals(option2) && 
             !correctAnswer.equals(option3) && !correctAnswer.equals(option4)) {
             correctAnswerEditText.setError("La réponse correcte doit correspondre à l'une des options");
             return;
         }
 
-        // Create question
         String[] options = {option1, option2, option3, option4};
         Question question = new Question(questionText, options, correctAnswer);
         question.setQuizId(currentQuiz.getId());
 
-        // Add question to database
         long questionId = dbHelper.addQuestion(question);
         if (questionId == -1) {
             Toast.makeText(this, "Erreur lors de l'ajout de la question", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Update quiz total questions
         currentQuiz.setTotalQuestions(currentQuiz.getTotalQuestions() + 1);
         dbHelper.updateQuizTotalQuestions(currentQuiz.getId(), currentQuiz.getTotalQuestions());
 
-        // Clear question fields
         questionTextEditText.setText("");
         option1EditText.setText("");
         option2EditText.setText("");
@@ -156,7 +142,6 @@ public class AddQuizActivity extends AppCompatActivity {
         option4EditText.setText("");
         correctAnswerEditText.setText("");
 
-        // Increment questions added counter
         questionsAdded++;
 
         Toast.makeText(this, "Question ajoutée avec succès", Toast.LENGTH_SHORT).show();

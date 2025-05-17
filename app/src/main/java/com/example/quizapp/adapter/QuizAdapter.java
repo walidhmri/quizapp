@@ -43,7 +43,6 @@ public class QuizAdapter extends RecyclerView.Adapter<QuizAdapter.QuizViewHolder
         holder.titleTextView.setText(quiz.getTitle());
         holder.descriptionTextView.setText(quiz.getDescription());
         
-        // Set progress
         int progress = (int) quiz.getProgressPercentage();
         holder.progressBar.setProgress(progress);
         

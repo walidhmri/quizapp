@@ -17,7 +17,7 @@ import java.util.Random;
 
 public class SplashActivity extends AppCompatActivity {
 
-    private static final int SPLASH_DURATION = 1500; // 1.5 seconds
+    private static final int SPLASH_DURATION = 1500; 
     private QuizDatabaseHelper dbHelper;
 
     @Override
@@ -27,7 +27,6 @@ public class SplashActivity extends AppCompatActivity {
         
         dbHelper = new QuizDatabaseHelper(this);
         
-        // Populate database with sample quizzes and questions if needed
         if (dbHelper.getQuizzesCount() == 0) {
             populateSampleQuizzesAndQuestions();
         }
@@ -35,32 +34,26 @@ public class SplashActivity extends AppCompatActivity {
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
             public void run() {
-                // Vérifier si l'utilisateur est connecté
                 SharedPreferences sharedPreferences = getSharedPreferences("QuizAppPrefs", MODE_PRIVATE);
                 boolean isLoggedIn = sharedPreferences.getBoolean("is_logged_in", false);
                 
                 if (!isLoggedIn) {
-                    // Si l'utilisateur n'est pas connecté, aller à l'écran de connexion
                     Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
                     startActivity(intent);
                     finish();
                     return;
                 }
                 
-                // Obtenir un quiz aléatoire
                 List<Quiz> quizzes = dbHelper.getAllQuizzes();
                 
                 if (quizzes.isEmpty()) {
-                    // Si aucun quiz n'est disponible, aller à la liste des quiz
                     Intent intent = new Intent(SplashActivity.this, QuizListActivity.class);
                     startActivity(intent);
                 } else {
-                    // Sélectionner un quiz aléatoire
                     Random random = new Random();
                     int randomIndex = random.nextInt(quizzes.size());
                     Quiz randomQuiz = quizzes.get(randomIndex);
                     
-                    // Démarrer le quiz aléatoire
                     Intent intent = new Intent(SplashActivity.this, MainActivity.class);
                     intent.putExtra("quiz_id", randomQuiz.getId());
                     intent.putExtra("from_splash", true);
@@ -84,7 +77,6 @@ public class SplashActivity extends AppCompatActivity {
     }
     
     private void populateSampleQuizzesAndQuestions() {
-        // Quiz 1: Histoire de l'Algérie
         Quiz historyQuiz = new Quiz();
         historyQuiz.setTitle("Histoire de l'Algérie");
         historyQuiz.setDescription("Questions sur l'histoire algérienne");
@@ -92,7 +84,6 @@ public class SplashActivity extends AppCompatActivity {
         historyQuiz.setCompletedQuestions(0);
         long historyQuizId = dbHelper.addQuiz(historyQuiz);
         
-        // Questions for History Quiz
         String[] options1 = {"1954", "1962", "1965", "1971"};
         Question q1 = new Question("En quelle année l'Algérie a-t-elle obtenu son indépendance?", options1, "1962");
         q1.setQuizId((int) historyQuizId);
@@ -118,7 +109,6 @@ public class SplashActivity extends AppCompatActivity {
         q5.setQuizId((int) historyQuizId);
         dbHelper.addQuestion(q5);
         
-        // Quiz 2: Géographie de l'Algérie
         Quiz geographyQuiz = new Quiz();
         geographyQuiz.setTitle("Géographie de l'Algérie");
         geographyQuiz.setDescription("Questions sur la géographie algérienne");
@@ -126,7 +116,6 @@ public class SplashActivity extends AppCompatActivity {
         geographyQuiz.setCompletedQuestions(0);
         long geographyQuizId = dbHelper.addQuiz(geographyQuiz);
         
-        // Questions for Geography Quiz
         String[] options6 = {"Oran", "Constantine", "Alger", "Annaba"};
         Question q6 = new Question("Quelle est la capitale de l'Algérie?", options6, "Alger");
         q6.setQuizId((int) geographyQuizId);
@@ -152,7 +141,6 @@ public class SplashActivity extends AppCompatActivity {
         q10.setQuizId((int) geographyQuizId);
         dbHelper.addQuestion(q10);
         
-        // Quiz 3: Culture Algérienne
         Quiz cultureQuiz = new Quiz();
         cultureQuiz.setTitle("Culture Algérienne");
         cultureQuiz.setDescription("Questions sur la culture et les traditions algériennes");
@@ -160,7 +148,6 @@ public class SplashActivity extends AppCompatActivity {
         cultureQuiz.setCompletedQuestions(0);
         long cultureQuizId = dbHelper.addQuiz(cultureQuiz);
         
-        // Questions for Culture Quiz
         String[] options11 = {"Couscous", "Chorba", "Rechta", "Chakhchoukha"};
         Question q11 = new Question("Quel est le plat national algérien?", options11, "Couscous");
         q11.setQuizId((int) cultureQuizId);
